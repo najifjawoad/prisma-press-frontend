@@ -1,5 +1,7 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 type loginState ={
     success: true,
     status: number,
@@ -33,7 +35,24 @@ export const logInAction = async  (previousState  : loginState, formData: FormDa
   })
 
 
-  const result = await res.json();
-  console.log(result);
+  const result : loginState = await res.json();
+   
+  if(result.success)
+  {
+    const cookieStore = await cookies();
+    cookieStore.set("accessToken" , result.data.accessToken , {
+        httpOnly : true,
+        maxAge : 60*60*24,
+        sameSite : "lax",
+    })
+    
+    cookieStore.set("refreshToken" , result.data.refreshToken , {
+        httpOnly : true,
+        maxAge : 60*60*24*7,
+        sameSite : "lax",
+    })
+  }
+
+
   return result ;
 };
