@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type loginState ={
     success: true,
@@ -35,7 +36,7 @@ export const logInAction = async  (previousState  : loginState, formData: FormDa
   })
 
 
-  const result : loginState = await res.json();
+  const result= await res.json();
    
   if(result.success)
   {
@@ -51,6 +52,8 @@ export const logInAction = async  (previousState  : loginState, formData: FormDa
         maxAge : 60*60*24*7,
         sameSite : "lax",
     })
+
+    redirect("/dashboard")
   }
 
 
